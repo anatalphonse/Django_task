@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="space-y-6">
+  <div class="flex items-center justify-between gap-2">
+    <div>
+      <h1 class="text-2xl font-semibold text-slate-900">Manage Users &amp; Admins</h1>
+      <p class="mt-1 text-sm text-slate-500">
+        Create users, promote or demote admins, and assign users to admins.
+      </p>
+    </div>
+  </div>
+
+  <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+    <h2 class="text-sm font-semibold text-slate-800 mb-4 uppercase tracking-wide">
+      Create User / Admin / SuperAdmin
+    </h2>
+    <form method="POST" class="grid gap-4 md:grid-cols-4 md:items-end">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="create">
+
+      <div>
+        <label class="block text-sm font-medium text-slate-700 mb-1" for="username">
+          Username
+        </label>
+        <input
+          id="username"
+          type="text"
+          name="username"
+          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+          placeholder="New username"
+          required
+        >
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-slate-700 mb-1" for="password">
+          Password
+        </label>
+        <input
+          id="password"
+          type="password"
+          name="password"
+          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+          placeholder="Temporary password"
+          required
+        >
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-slate-700 mb-1" for="role">
+          Role
+        </label>
+        <select
+          id="role"
+          name="role"
+          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+        >
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+          <option value="superadmin">SuperAdmin</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-slate-700 mb-1" for="admin_id">
+          Assign admin (for users)
+        </label>
+        <select
+          id="admin_id"
+          name="admin_id"
+          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+        >
+          <option value="">None</option>
+          {% for admin in admins %}
+            <option value="{{ admin.id }}">{{ admin.username }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="md:col-span-4">
+        <button
+          type="submit"
+          class="inline-flex items-center px-4 py-2 rounded-lg bg-teal-600 text-white text-sm font-medium hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition"
+        >
+          Create account
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+    <h2 class="px-4 pt-4 pb-2 text-sm font-semibold text-slate-800 uppercase tracking-wide">
+      Existing Users
+    </h2>
+    <div class="overflow-x-auto">
+      <table class="min-w-full text-sm">
+        <thead class="bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <tr>
+            <th class="px-4 py-3">Username</th>
+            <th class="px-4 py-3">Role &amp; Admin</th>
+            <th class="px-4 py-3 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200">
+          {% for user in users %}
+            <tr class="hover:bg-slate-50/60 align-top">
+              <td class="px-4 py-3">
+                <div class="font-medium text-slate-900">{{ user.username }}</div>
+                <div class="mt-0.5 text-xs text-slate-500">
+                  ID: {{ user.id }}
+                </div>
+              </td>
+              <td class="px-4 py-3">
+                <form method="POST" class="space-y-2">
+                  {% csrf_token %}
+                  <input type="hidden" name="action" value="update">
+                  <input type="hidden" name="user_id" value="{{ user.id }}">
+                  <div class="flex flex-col sm:flex-row gap-2">
+                    <select
+                      name="role"
+                      class="rounded-lg border border-slate-300 px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500"
+                    >
+                      <option value="user" {% if user.role == "user" %}selected{% endif %}>User</option>
+                      <option value="admin" {% if user.role == "admin" %}selected{% endif %}>Admin</option>
+                      <option value="superadmin" {% if user.role == "superadmin" %}selected{% endif %}>SuperAdmin</option>
+                    </select>
+                    <select
+                      name="admin_id"
+                      class="rounded-lg border border-slate-300 px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500"
+                    >
+                      <option value="">No admin</option>
+                      {% for admin in admins %}
+                        <option value="{{ admin.id }}" {% if user.admin == admin %}selected{% endif %}>
+                          {{ admin.username }}
+                        </option>
+                      {% endfor %}
+                    </select>
+                    <button
+                      type="submit"
+                      class="inline-flex items-center justify-center px-3 py-1.5 rounded-lg bg-teal-600 text-white text-xs font-medium hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-teal-500 transition"
+                    >
+                      Save
+                    </button>
+                  </div>
+                </form>
+                <div class="mt-1 text-xs text-slate-500">
+                  Current admin: {{ user.admin|default:"None" }}
+                </div>
+              </td>
+              <td class="px-4 py-3 text-right">
+                <form method="POST">
+                  {% csrf_token %}
+                  <input type="hidden" name="action" value="delete">
+                  <input type="hidden" name="user_id" value="{{ user.id }}">
+                  <button
+                    type="submit"
+                    class="inline-flex items-center justify-center px-3 py-1.5 rounded-lg border border-red-200 text-red-600 text-xs font-medium hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-red-400 transition"
+                  >
+                    Delete
+                  </button>
+                </form>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="3" class="px-4 py-6 text-center text-slate-500">
+                No users yet.
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock  %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="flex items-center justify-center">
+  <div class="w-full max-w-md bg-white rounded-xl shadow-sm border border-slate-200 p-8">
+    <h1 class="text-2xl font-semibold text-slate-900 mb-2 text-center">Sign in</h1>
+    <p class="text-sm text-slate-500 mb-6 text-center">
+      Use your username and password to access the Task Manager.
+    </p>
+    <form method="POST" class="space-y-4">
+      {% csrf_token %}
+      <div>
+        <label class="block text-sm font-medium text-slate-700 mb-1" for="username">
+          Username
+        </label>
+        <input
+          id="username"
+          type="text"
+          name="username"
+          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+          placeholder="Enter your username"
+          required
+        >
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-700 mb-1" for="password">
+          Password
+        </label>
+        <input
+          id="password"
+          type="password"
+          name="password"
+          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+          placeholder="Enter your password"
+          required
+        >
+      </div>
+      <button
+        type="submit"
+        class="w-full inline-flex justify-center items-center px-4 py-2 rounded-lg bg-teal-600 text-white text-sm font-medium hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition"
+      >
+        Login
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}
