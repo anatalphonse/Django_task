@@ -1,0 +1,23 @@
+services:
+  web:
+    build: .
+    container_name: taskmanager-web
+    ports:
+      - "8000:8000"
+    environment:
+      - SQLITE_DB_PATH=/data/db.sqlite3
+      # Superadmin: username abcd, password 1234 (change in production)
+      - DJANGO_SUPERUSER_USERNAME=abcd
+      - DJANGO_SUPERUSER_PASSWORD=1234
+      - DJANGO_SUPERUSER_EMAIL=admin@example.com
+      # Hosting: set in production
+      # - DJANGO_SECRET_KEY=your-secret-key
+      # - DJANGO_DEBUG=False
+      # - DJANGO_ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com
+      # - DJANGO_CSRF_TRUSTED_ORIGINS=https://yourdomain.com
+    volumes:
+      - dbdata:/data
+    restart: unless-stopped
+
+volumes:
+  dbdata:
